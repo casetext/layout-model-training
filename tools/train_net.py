@@ -28,7 +28,6 @@ from detectron2.evaluation import (
 from detectron2.modeling import GeneralizedRCNNWithTTA
 import pandas as pd
 
-
 def get_augs(cfg):
     """Add all the desired augmentations here. A list of availble augmentations
     can be found here:
@@ -36,11 +35,14 @@ def get_augs(cfg):
     """
     augs = [
         T.ResizeShortestEdge(
-            cfg.INPUT.MIN_SIZE_TRAIN,
-            cfg.INPUT.MAX_SIZE_TRAIN,
+            cfg.INPUT.MIN_SIZE_TEST,
+            cfg.INPUT.MAX_SIZE_TEST,
             cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING,
         )
     ]
+
+    # edit if need be, we do not want to randomly crop other than to resize
+    # this will become important with effdet
     if cfg.INPUT.CROP.ENABLED:
         augs.append(
             T.RandomCrop_CategoryAreaConstraint(
@@ -51,9 +53,9 @@ def get_augs(cfg):
             )
         )
     horizontal_flip: bool = cfg.INPUT.RANDOM_FLIP == "horizontal"
-    augs.append(T.RandomFlip(horizontal=horizontal_flip, vertical=not horizontal_flip))
+    # augs.append(T.RandomFlip(horizontal=horizontal_flip, vertical=not horizontal_flip))
     # Rotate the image between -90 to 0 degrees clockwise around the centre
-    augs.append(T.RandomRotation(angle=[-90.0, 0.0]))
+    # augs.append(T.RandomRotation(angle=[-90.0, 0.0]))
     return augs
 
 
